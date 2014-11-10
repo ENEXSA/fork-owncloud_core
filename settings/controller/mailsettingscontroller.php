@@ -16,6 +16,7 @@ use \OCP\AppFramework\Controller;
 use OCP\IRequest;
 use OCP\IL10N;
 use OCP\IConfig;
+use OCP\Mail\IMessage;
 
 /**
  * @package OC\Settings\Controller
@@ -30,8 +31,8 @@ class MailSettingsController extends Controller {
 	private $userSession;
 	/** @var \OC_Defaults */
 	private $defaults;
-	/** @var \OC_Mail */
-	private $mail;
+	/** @var IMessage */
+	private $message;
 	/** @var string */
 	private $defaultMailAddress;
 
@@ -42,7 +43,7 @@ class MailSettingsController extends Controller {
 	 * @param IConfig $config
 	 * @param Session $userSession
 	 * @param \OC_Defaults $defaults
-	 * @param \OC_Mail $mail
+	 * @param IMessage $message
 	 * @param string $defaultMailAddress
 	 */
 	public function __construct($appName,
@@ -51,14 +52,14 @@ class MailSettingsController extends Controller {
 								IConfig $config,
 								Session $userSession,
 								\OC_Defaults $defaults,
-								\OC_Mail $mail,
+								IMessage $message,
 								$defaultMailAddress) {
 		parent::__construct($appName, $request);
 		$this->l10n = $l10n;
 		$this->config = $config;
 		$this->userSession = $userSession;
 		$this->defaults = $defaults;
-		$this->mail = $mail;
+		$this->message = $message;
 		$this->defaultMailAddress = $defaultMailAddress;
 	}
 
@@ -132,12 +133,11 @@ class MailSettingsController extends Controller {
 		$email = $this->config->getUserValue($this->userSession->getUser()->getUID(), $this->appName, 'email', '');
 		if (!empty($email)) {
 			try {
-				$this->mail->send($email, $this->userSession->getUser()->getDisplayName(),
-					$this->l10n->t('test email settings'),
-					$this->l10n->t('If you received this email, the settings seem to be correct.'),
-					$this->defaultMailAddress,
-					$this->defaults->getName()
-				);
+				$this->message->setTo(array($email => $this->userSession->getUser()->getDisplayName()));
+				$this->message->setFrom(array($this->defaultMailAddress));
+				$this->message->setSubject($this->l10n->t('test email settings'));
+				$this->message->setPlainBody('If you received this email, the settings seem to be correct.');
+				$this->message->send();
 			} catch (\Exception $e) {
 				return array('data' =>
 					array('message' =>
