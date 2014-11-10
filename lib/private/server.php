@@ -9,7 +9,6 @@ use OC\Cache\UserCache;
 use OC\Diagnostics\NullQueryLogger;
 use OC\Diagnostics\EventLogger;
 use OC\Diagnostics\QueryLogger;
-use OC\Mail\Mailer;
 use OC\Mail\Message;
 use OC\Security\CertificateManager;
 use OC\Files\Node\Root;
