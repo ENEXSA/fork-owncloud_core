@@ -39,6 +39,7 @@
 	"symfony/console": "~2.5",
 	"symfony/routing": "~2.5",
 	"pimple/pimple": "~3.0",
-	"ircmaxell/password-compat": "1.0.*"
+	"ircmaxell/password-compat": "1.0.*",
+        "hautelook/phpass": "~0.3"
 	}
 }
